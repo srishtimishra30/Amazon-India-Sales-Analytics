@@ -6,7 +6,7 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-orange?logo=mysql)
 ![PowerBI](https://img.shields.io/badge/Power%20BI-Dashboard-yellow?logo=powerbi)
 ![XGBoost](https://img.shields.io/badge/XGBoost-95%25%20Accuracy-green)
-![SHAP](https://img.shields.io/badge/SHAP-Explainability-purple)
+
 
 ---
 
