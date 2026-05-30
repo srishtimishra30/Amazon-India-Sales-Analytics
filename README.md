@@ -194,13 +194,4 @@ This generates all 9 charts and trains the XGBoost model.
 
 ---
 
-## 👩‍💻 Author
 
-**Srishti**
-- Final Year Student — Data Analytics
-- 📧 Connect on [LinkedIn](https://linkedin.com/in/YOUR_PROFILE)
-- 🐙 [GitHub](https://github.com/YOUR_USERNAME)
-
----
-
-## ⭐ If you found this project useful, please give it a star!
