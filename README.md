@@ -41,8 +41,6 @@ Python — EDA + Cleaning + Feature Engineering
      ↓
 XGBoost ML Model (95% accuracy, AUC 0.96)
      ↓
-SHAP Explainability Analysis
-     ↓
 Predictions written back to MySQL
      ↓
 Power BI Dashboard (4 pages, live SQL connection)
