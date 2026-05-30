@@ -57,7 +57,6 @@ Power BI Dashboard (4 pages, live SQL connection)
 | Data Processing | Pandas, NumPy |
 | Visualization | Matplotlib, Seaborn, Plotly |
 | Machine Learning | Scikit-learn, XGBoost |
-| Explainability | SHAP |
 | Dashboard | Power BI Desktop |
 | Version Control | Git, GitHub |
 
