@@ -20,13 +20,13 @@ This project analyzes real Amazon India fashion sales data (Apr–Jun 2022) to u
 
 ## 🎯 Key Findings
 
-- 📦 **1,20,378 total orders** processed across April–June 2022
-- 💰 **₹6.7 Crore** total revenue generated
-- ❌ **14.28% cancellation rate** — 17,185 orders cancelled
-- 🏆 **Set (50%)** and **Kurta (27%)** dominate category revenue
-- 📍 **Maharashtra** is the #1 state by both revenue and cancellations
-- 🚚 **Amazon fulfilment** has lower cancellation rate than Merchant
-- 🤖 **Order Quantity (qty)** is the #1 driver of cancellations per SHAP analysis
+- **1,20,378 total orders** processed across April–June 2022
+- **₹6.7 Crore** total revenue generated
+- **14.28% cancellation rate** — 17,185 orders cancelled
+- **Set (50%)** and **Kurta (27%)** dominate category revenue
+- **Maharashtra** is the #1 state by both revenue and cancellations
+- **Amazon fulfilment** has lower cancellation rate than Merchant
+- **Order Quantity (qty)** is the #1 driver of cancellations per SHAP analysis
 
 ---
 
