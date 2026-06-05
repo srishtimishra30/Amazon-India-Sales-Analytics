@@ -5,31 +5,28 @@ from sqlalchemy import create_engine
 import warnings
 warnings.filterwarnings('ignore')
 
-# ── CONNECT TO MYSQL ─────────────────────────────────────────
+# CONNECT TO MYSQL 
 engine = create_engine('mysql+pymysql://root:Srishti123@localhost/amazon_fashion')
 df = pd.read_sql("SELECT * FROM orders", engine)
-print(f"✅ Data loaded: {df.shape[0]} rows, {df.shape[1]} columns")
+print(f"Data loaded: {df.shape[0]} rows, {df.shape[1]} columns")
 
-# ── BASIC SETUP ───────────────────────────────────────────────
+# BASIC SETUP
 df['order_date'] = pd.to_datetime(df['order_date'])
 df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0)
 sns.set_theme(style="whitegrid")
 plt.rcParams['figure.figsize'] = (12, 5)
 
-print("\n📊 BASIC STATS:")
+print("\n BASIC STATS:")
 print(f"Date range: {df['order_date'].min()} to {df['order_date'].max()}")
 print(f"Total Revenue: ₹{df[df['is_cancelled']==0]['amount'].sum():,.0f}")
 print(f"Cancellation Rate: {df['is_cancelled'].mean()*100:.2f}%")
 print(f"Unique Categories: {df['category'].nunique()}")
 print(f"Unique States: {df['ship_state'].nunique()}")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 1: Monthly Revenue Trend
-# ═══════════════════════════════════════════════════════════════
 monthly = df[df['is_cancelled']==0].groupby('order_month')['amount'].sum().reset_index()
 plt.figure(figsize=(12,5))
-plt.plot(monthly['order_month'], monthly['amount'], marker='o',
-         color='#2196F3', linewidth=2.5, markersize=8)
+plt.plot(monthly['order_month'], monthly['amount'], marker='o', color='#2196F3', linewidth=2.5, markersize=8)
 plt.fill_between(range(len(monthly)), monthly['amount'], alpha=0.1, color='#2196F3')
 for i, row in monthly.iterrows():
     plt.annotate(f"₹{row['amount']/100000:.1f}L",
@@ -41,34 +38,26 @@ plt.xticks(range(len(monthly)), monthly['order_month'])
 plt.tight_layout()
 plt.savefig('chart1_monthly_revenue.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 1 saved")
-
-# ═══════════════════════════════════════════════════════════════
+print("Chart 1 saved")
 # CHART 2: Revenue by Category
-# ═══════════════════════════════════════════════════════════════
 cat_rev = df[df['is_cancelled']==0].groupby('category')['amount']\
           .sum().sort_values(ascending=False).head(10).reset_index()
 plt.figure(figsize=(12,5))
-bars = plt.bar(cat_rev['category'], cat_rev['amount'],
-               color=sns.color_palette("Blues_d", len(cat_rev)))
+bars = plt.bar(cat_rev['category'], cat_rev['amount'], color=sns.color_palette("Blues_d", len(cat_rev)))
 for bar, val in zip(bars, cat_rev['amount']):
-    plt.text(bar.get_x()+bar.get_width()/2, bar.get_height()+50000,
-             f'₹{val/100000:.1f}L', ha='center', fontsize=9)
+    plt.text(bar.get_x()+bar.get_width()/2, bar.get_height()+50000, f'₹{val/100000:.1f}L', ha='center', fontsize=9)
 plt.title('Top 10 Categories by Revenue', fontsize=14, fontweight='bold')
 plt.xlabel('Category'); plt.ylabel('Revenue (INR)')
 plt.xticks(rotation=30, ha='right')
 plt.tight_layout()
 plt.savefig('chart2_category_revenue.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 2 saved")
+print("Chart 2 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 3: Cancellation Rate by Category
-# ═══════════════════════════════════════════════════════════════
 cat_cancel = df.groupby('category').agg(
     total=('order_id','count'),
-    cancelled=('is_cancelled','sum')
-).reset_index()
+    cancelled=('is_cancelled','sum')).reset_index()
 cat_cancel['cancel_rate'] = cat_cancel['cancelled']/cat_cancel['total']*100
 cat_cancel = cat_cancel[cat_cancel['total']>100].sort_values('cancel_rate', ascending=False).head(10)
 
@@ -86,11 +75,9 @@ plt.xticks(rotation=30, ha='right')
 plt.legend(); plt.tight_layout()
 plt.savefig('chart3_cancellation_by_category.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 3 saved")
+print("Chart 3 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 4: Top 10 States by Revenue
-# ═══════════════════════════════════════════════════════════════
 state_rev = df[df['is_cancelled']==0].groupby('ship_state')['amount']\
             .sum().sort_values(ascending=True).tail(10)
 plt.figure(figsize=(12,5))
@@ -103,16 +90,13 @@ plt.title('Top 10 States by Revenue', fontsize=14, fontweight='bold')
 plt.xlabel('Revenue (INR)'); plt.tight_layout()
 plt.savefig('chart4_state_revenue.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 4 saved")
+print("Chart 4 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 5: Fulfilment Method Comparison
-# ═══════════════════════════════════════════════════════════════
 ful = df.groupby('fulfilment').agg(
     orders=('order_id','count'),
     revenue=('amount','sum'),
-    cancel_rate=('is_cancelled','mean')
-).reset_index()
+    cancel_rate=('is_cancelled','mean')).reset_index()
 ful['cancel_rate'] = ful['cancel_rate']*100
 
 fig, axes = plt.subplots(1, 3, figsize=(14,5))
@@ -126,15 +110,12 @@ fig.suptitle('Amazon vs Merchant Fulfilment Comparison', fontsize=14, fontweight
 plt.tight_layout()
 plt.savefig('chart5_fulfilment_comparison.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 5 saved")
+print("Chart 5 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 6: B2B vs B2C
-# ═══════════════════════════════════════════════════════════════
 b2b = df.groupby('is_b2b').agg(
     orders=('order_id','count'),
-    avg_order_value=('amount','mean')
-).reset_index()
+    avg_order_value=('amount','mean')).reset_index()
 b2b['type'] = b2b['is_b2b'].map({0:'B2C', 1:'B2B'})
 
 fig, axes = plt.subplots(1, 2, figsize=(10,5))
@@ -151,11 +132,9 @@ plt.suptitle('B2B vs B2C Analysis', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.savefig('chart6_b2b_vs_b2c.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 6 saved")
+print("Chart 6 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 7: Correlation Heatmap
-# ═══════════════════════════════════════════════════════════════
 num_cols = ['qty','amount','is_b2b','is_cancelled','is_returned']
 corr = df[num_cols].corr()
 plt.figure(figsize=(8,6))
@@ -165,12 +144,10 @@ plt.title('Correlation Heatmap', fontsize=14, fontweight='bold')
 plt.tight_layout()
 plt.savefig('chart7_correlation_heatmap.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 7 saved")
+print("Chart 7 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # ML MODEL: Cancellation Predictor
-# ═══════════════════════════════════════════════════════════════
-print("\n🤖 Building ML Model...")
+print("\n Building ML Model...")
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, roc_auc_score
@@ -207,9 +184,7 @@ print(f"\n📈 Model Results:")
 print(f"AUC-ROC Score: {auc:.4f}")
 print(classification_report(y_test, y_pred))
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 8: Feature Importance
-# ═══════════════════════════════════════════════════════════════
 feat_imp = pd.DataFrame({
     'feature': X.columns,
     'importance': model.feature_importances_
@@ -224,12 +199,10 @@ plt.xlabel('Importance Score')
 plt.tight_layout()
 plt.savefig('chart8_feature_importance.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 8 saved")
+print("Chart 8 saved")
 
-# ═══════════════════════════════════════════════════════════════
 # CHART 9: SHAP Explainability
-# ═══════════════════════════════════════════════════════════════
-print("\n🔍 Generating SHAP explanation...")
+print("\n Generating SHAP explanation...")
 explainer = shap.TreeExplainer(model)
 shap_values = explainer.shap_values(X_test[:500])
 plt.figure()
@@ -239,23 +212,23 @@ plt.title('SHAP — Why Does Each Feature Push Towards Cancellation?',
 plt.tight_layout()
 plt.savefig('chart9_shap_summary.png', dpi=150, bbox_inches='tight')
 plt.show()
-print("✅ Chart 9 saved")
+print("Chart 9 saved")
 
 # ── SAVE MODEL ────────────────────────────────────────────────
 import joblib
 joblib.dump(model, 'cancellation_model.pkl')
-print("✅ Model saved as cancellation_model.pkl")
+print("Model saved as cancellation_model.pkl")
 
 # ── WRITE PREDICTIONS BACK TO MYSQL ──────────────────────────
-print("\n💾 Writing predictions back to MySQL...")
+print("\n Writing predictions back to MySQL...")
 X_full = ml_df.drop('is_cancelled', axis=1)
 ml_df['churn_probability'] = model.predict_proba(X_full)[:,1]
 ml_df['predicted_cancelled'] = model.predict(X_full)
 ml_df[['churn_probability','predicted_cancelled']]\
     .to_sql('order_predictions', engine, if_exists='replace', index=True)
-print("✅ Predictions saved to MySQL table 'order_predictions'")
+print(" Predictions saved to MySQL table 'order_predictions'")
 
 print("\n" + "="*50)
-print("🎉 ALL DONE! 9 charts + ML model + predictions saved!")
+print(" ALL DONE! 9 charts + ML model + predictions saved!")
 print("="*50)
 print("Next step: Open Power BI and connect to MySQL")
